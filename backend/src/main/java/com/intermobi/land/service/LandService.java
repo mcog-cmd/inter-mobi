@@ -1,10 +1,10 @@
-package com.inter_mobi.land.service;
+package com.intermobi.land.service;
 
-import com.inter_mobi.land.domain.Land;
-import com.inter_mobi.land.repository.LandRepository;
+import com.intermobi.land.domain.Land;
+import com.intermobi.land.exception.LandException;
+import com.intermobi.land.repository.LandRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -12,23 +12,24 @@ public class LandService {
 
     private final LandRepository landRepository;
 
-    public LandService(LandRepository landRepository) {
+    public LandService(Land land, LandRepository landRepository) {
         this.landRepository = landRepository;
     }
 
-    public List<Land> listarTodos() {
-        return landRepository.findAll();
+    public Land registerLand(Land land){
+        if (landRepository.existsByGeometryIntersects(land.getGeometry())){
+            throw new LandException(
+                "The land overlaps an area that is already registered."
+            );
+        } return landRepository.save(land);
     }
 
-    public Optional<Land> buscarPorId(Long id) {
+    public <List>Land searchLand(Land land){
+        return landRepository.searchByGeometryIntersects(land.getGeometry());
+    }
+
+    public Optional<Land> findById(Long id) {
         return landRepository.findById(id);
     }
 
-    public Land salvar(Land land) {
-        return landRepository.save(land);
-    }
-
-    public void deletar(Long id) {
-        landRepository.deleteById(id);
-    }
 }
