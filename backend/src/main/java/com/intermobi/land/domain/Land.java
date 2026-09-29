@@ -1,4 +1,4 @@
-package com.inter_mobi.land.domain;
+package com.intermobi.land.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
