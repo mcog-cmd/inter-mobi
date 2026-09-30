@@ -7,14 +7,13 @@ import org.springframework.stereotype.Service;
 
 import org.locationtech.jts.geom.Polygon;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LandService {
 
     private final LandRepository landRepository;
 
-    public LandService(Land land, LandRepository landRepository) {
+    public LandService(LandRepository landRepository) {
         this.landRepository = landRepository;
     }
 
