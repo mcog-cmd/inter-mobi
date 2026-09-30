@@ -1,4 +1,4 @@
-package com.example.inter_mobi;
+package com.intermobi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,5 +11,4 @@ class InterMobiApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
