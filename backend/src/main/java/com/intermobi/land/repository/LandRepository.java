@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.locationtech.jts.geom.Polygon;
 
+import java.util.List;
+
 @Repository
 public interface LandRepository extends JpaRepository<Land, Long> {
 
@@ -26,5 +28,5 @@ public interface LandRepository extends JpaRepository<Land, Long> {
         FROM Land land
         WHERE function('ST_Intersects', land.geometry, :geometry) = true
     """)
-    <List>Land searchByGeometryIntersects(Polygon geometry);
+    List<Land> searchByGeometryIntersects(Polygon geometry);
 }
