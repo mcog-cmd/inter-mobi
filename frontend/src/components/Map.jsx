@@ -6,6 +6,7 @@ import OSM from "ol/source/OSM";
 import Draw from "ol/interaction/Draw";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
+import GeoJSON from "ol/format/GeoJSON";
 
 const MapComponent = () => {
     const mapElement = useRef(null);
@@ -39,8 +40,14 @@ const MapComponent = () => {
         map.addInteraction(draw);
 
         draw.on("drawend", (event) => {
-            const geometry = event.feature.getGeometry();
-            console.log(geometry)
+            const geoJson = new GeoJSON().writeFeatureObject(
+                event.feature,
+                {
+                    featureProjection: "EPSG:3857",
+                    dataProjection: "EPSG:4326"
+                }
+            );
+            console.log("geojson", geoJson.geometry)
         })
 
 
