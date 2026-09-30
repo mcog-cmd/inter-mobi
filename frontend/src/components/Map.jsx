@@ -73,8 +73,7 @@ const MapComponent = () => {
 
         console.log(request);
 
-        // posteriormente:
-        // await fetch(...);
+        setShowModal(false)
 
     };
 
