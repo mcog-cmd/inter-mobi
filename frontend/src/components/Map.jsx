@@ -8,8 +8,13 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 
+import { useState } from "react";
+import LandFormModal from "./LandFormModal";
+
 const MapComponent = () => {
     const mapElement = useRef(null);
+    const [geometry, setGeometry] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const vectorSource = new VectorSource();
@@ -47,8 +52,10 @@ const MapComponent = () => {
                     dataProjection: "EPSG:4326"
                 }
             );
-            console.log("geojson", geoJson.geometry)
-        })
+
+            setGeometry(geoJson.geometry);
+            setShowModal(true);
+        });
 
 
         return () => {
@@ -56,7 +63,37 @@ const MapComponent = () => {
         };
     }, []);
 
-    return <div ref={mapElement} className="map" />;
+    const handleSubmitLand = async (landData) => {
+        const request = {
+            price: landData.price,
+            description: landData.description,
+            contact: landData.contact,
+            geometry: geometry
+        };
+
+        console.log(request);
+
+        // posteriormente:
+        // await fetch(...);
+
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
+    return (
+        <>
+            <div ref={mapElement} className="map" />
+
+            {showModal && (
+                <LandFormModal
+                    onSubmit={handleSubmitLand}
+                    onClose={handleCloseModal}
+                />
+            )}
+        </>
+    );
 }
 
 export default MapComponent;
