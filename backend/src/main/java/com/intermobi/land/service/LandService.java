@@ -5,6 +5,8 @@ import com.intermobi.land.exception.LandException;
 import com.intermobi.land.repository.LandRepository;
 import org.springframework.stereotype.Service;
 
+import org.locationtech.jts.geom.Polygon;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,12 +26,13 @@ public class LandService {
         } return landRepository.save(land);
     }
 
-    public <List>Land searchLand(Land land){
-        return landRepository.searchByGeometryIntersects(land.getGeometry());
+    public List<Land> searchLands(Polygon landGeometry){
+        return landRepository.searchByGeometryIntersects(landGeometry);
     }
 
-    public Optional<Land> findById(Long id) {
-        return landRepository.findById(id);
+    public Land getLandById(Long id) {
+        return landRepository.findById(id)
+                .orElseThrow(() -> new LandException("Land not found"));
     }
 
 }
