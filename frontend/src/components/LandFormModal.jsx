@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const LandFormModal = ({ onSubmit, onClose }) => {
+const LandFormModal = ({ onSubmit, onClose, error }) => {
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
     const [contact, setContact] = useState("");
@@ -22,6 +22,8 @@ const LandFormModal = ({ onSubmit, onClose }) => {
                     <h2>Register land</h2>
                     <p>Enter the information about the land.</p>
                 </div>
+
+                {error && <div className="form-error">{error}</div>}
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-field">
