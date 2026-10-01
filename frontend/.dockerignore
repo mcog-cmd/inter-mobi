@@ -5,3 +5,7 @@ dist
 .vscode
 .idea
 *.log
+coverage
+.env
+.env.*
+!.env.example
