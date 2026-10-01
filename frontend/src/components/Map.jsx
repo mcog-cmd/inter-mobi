@@ -10,6 +10,7 @@ import GeoJSON from "ol/format/GeoJSON";
 
 import { useState } from "react";
 import LandFormModal from "./LandFormModal";
+import { registerLand } from "../services/landService";
 
 const MapComponent = () => {
     const mapElement = useRef(null);
@@ -71,7 +72,15 @@ const MapComponent = () => {
             geometry: geometry
         };
 
-        console.log(request);
+        try {
+            const savedLand = await registerLand(request);
+            console.log("Land registered:", savedLand);
+            setShowModal(false);
+
+        } catch (error) {
+            console.error("Error registering land:", error);
+
+        }
 
         setShowModal(false)
 
