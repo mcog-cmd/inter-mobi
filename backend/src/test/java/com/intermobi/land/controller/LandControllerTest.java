@@ -102,19 +102,14 @@ class LandControllerTest {
 
     @Test
     void shouldSearchLands() {
-        LandRequestDTO request = new LandRequestDTO(
-                new BigDecimal("100000.00"),
-                "Test land",
-                "83999999999",
-                createGeoJson()
-        );
+        JsonNode requestGeometry = createGeoJson();
 
         Polygon polygon = createPolygon();
         Land land = createLand();
 
         JsonNode responseGeometry = createGeoJson();
 
-        when(geoJsonConverter.toPolygon(request.geometry()))
+        when(geoJsonConverter.toPolygon(requestGeometry))
                 .thenReturn(polygon);
 
         when(landService.searchLands(polygon))
@@ -123,13 +118,13 @@ class LandControllerTest {
         when(geoJsonConverter.toGeoJson(land.getGeometry()))
                 .thenReturn(responseGeometry);
 
-        ResponseEntity<?> response = landController.searchLands(request);
+        ResponseEntity<?> response = landController.searchLands(requestGeometry);
 
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
 
         verify(geoJsonConverter)
-                .toPolygon(request.geometry());
+                .toPolygon(requestGeometry);
 
         verify(landService)
                 .searchLands(polygon);

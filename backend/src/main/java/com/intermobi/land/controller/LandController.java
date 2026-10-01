@@ -1,5 +1,6 @@
 package com.intermobi.land.controller;
 
+import tools.jackson.databind.JsonNode;
 import com.intermobi.land.domain.Land;
 import com.intermobi.land.dto.LandRequestDTO;
 import com.intermobi.land.dto.LandResponseDTO;
@@ -28,47 +29,47 @@ public class LandController {
         Polygon polygon = geoJsonConverter.toPolygon(request.geometry());
 
         Land savedLand = landService.registerLand(
-            new Land(
-                request.price(),
-                request.description(),
-                request.contact(),
-                polygon
-            )
+                new Land(
+                        request.price(),
+                        request.description(),
+                        request.contact(),
+                        polygon
+                )
         );
 
         LandResponseDTO response = new LandResponseDTO(
-            savedLand.getId(),
-            savedLand.getPrice(),
-            savedLand.getDescription(),
-            savedLand.getContact(),
-            geoJsonConverter.toGeoJson(savedLand.getGeometry())
+                savedLand.getId(),
+                savedLand.getPrice(),
+                savedLand.getDescription(),
+                savedLand.getContact(),
+                geoJsonConverter.toGeoJson(savedLand.getGeometry())
         );
 
         return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(response);
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
-    @GetMapping
-    public ResponseEntity<?> searchLands(@Valid @RequestBody LandRequestDTO request) {
+    @PostMapping("/search")
+    public ResponseEntity<?> searchLands(@RequestBody JsonNode geometry) {
 
-        Polygon polygon = geoJsonConverter.toPolygon(request.geometry());
+        Polygon polygon = geoJsonConverter.toPolygon(geometry);
 
         List<Land> searchedLands = landService.searchLands(polygon);
 
         List<LandResponseDTO> response = searchedLands.stream()
-            .map(land -> new LandResponseDTO(
-                land.getId(),
-                land.getPrice(),
-                land.getDescription(),
-                land.getContact(),
-                geoJsonConverter.toGeoJson(land.getGeometry())
-            ))
-            .toList();
+                .map(land -> new LandResponseDTO(
+                        land.getId(),
+                        land.getPrice(),
+                        land.getDescription(),
+                        land.getContact(),
+                        geoJsonConverter.toGeoJson(land.getGeometry())
+                ))
+                .toList();
 
         return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(response);
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
     @GetMapping("/{id}")
@@ -77,15 +78,15 @@ public class LandController {
         Land land = landService.getLandById(id);
 
         LandResponseDTO response = new LandResponseDTO(
-            land.getId(),
-            land.getPrice(),
-            land.getDescription(),
-            land.getContact(),
-            geoJsonConverter.toGeoJson(land.getGeometry())
+                land.getId(),
+                land.getPrice(),
+                land.getDescription(),
+                land.getContact(),
+                geoJsonConverter.toGeoJson(land.getGeometry())
         );
 
         return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(response);
+                .status(HttpStatus.OK)
+                .body(response);
     }
 }
