@@ -11,11 +11,6 @@ import java.util.List;
 @Repository
 public interface LandRepository extends JpaRepository<Land, Long> {
 
-    /*
-    conte quantos terrenos já cadastrados possuem interseção entre a geometria
-    deles e a geometria que estou tentando inserir. Se a quantidade for maior
-    que 0, retorne true; caso contrário, false.
-     */
     @Query("""
         SELECT COUNT(lands) > 0
         FROM Land lands
