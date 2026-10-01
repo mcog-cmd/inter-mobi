@@ -107,146 +107,44 @@ docker compose up -d --build
 
 The services run separately: PostgreSQL + PostGIS → Backend → Frontend.
 
-**Requirements:** Java 17, Maven 3.9+, Node.js 22+ with npm, PostgreSQL and PostGIS.
+### 4.0 Prerequisites
 
-### 4.1 Database
+| Tool | Version | Used for |
+|---|---|---|
+| Java (JDK) | 17 | Backend |
+| Node.js + npm | 22+ | Frontend |
+| PostgreSQL + PostGIS | any recent version | Database |
 
-The SQL commands below must be run **inside the PostgreSQL shell (`psql`)**, not in the regular terminal.
+Maven does not need to be installed: the backend ships with the Maven Wrapper (`./mvnw`), which downloads the right Maven version automatically on first use.
 
-**1. Install PostgreSQL and PostGIS (skip if already installed)**
+Check what you already have:
 
-On Ubuntu/Debian:
+```bash
+java -version      # should print 17.x
+node -v            # should print v22.x or newer
+npm -v
+psql --version
+```
+
+Install whatever is missing.
+
+**Ubuntu / Debian**
 
 ```bash
 sudo apt update
-sudo apt install postgresql postgis
-sudo systemctl start postgresql
+sudo apt install openjdk-17-jdk
 ```
 
-On other systems, install PostgreSQL and PostGIS with your package manager or from their official websites. The installation creates the `postgres` superuser used in the next step.
-
-**2. Open `psql` as the PostgreSQL superuser**
+Install Node.js 22 with [nvm](https://github.com/nvm-sh/nvm) (the `apt` package is usually outdated):
 
 ```bash
-sudo -u postgres psql
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+source ~/.bashrc
+nvm install 22
 ```
 
-**3. Create the database and the application user**
+PostgreSQL and PostGIS are installed in the next step.
 
-```sql
-CREATE DATABASE inter_mobi;
-CREATE USER inter_mobi_user WITH PASSWORD 'inter_mobi_pass';
-GRANT ALL PRIVILEGES ON DATABASE inter_mobi TO inter_mobi_user;
-```
-
-**4. Connect to the new database and enable PostGIS**
-
-First, connect to the database (run this command **alone**, before pasting anything else):
-
-```sql
-\c inter_mobi
-```
-
-Then run:
-
-```sql
-CREATE EXTENSION IF NOT EXISTS postgis;
-GRANT ALL ON SCHEMA public TO inter_mobi_user;
-```
-
-**5. Exit `psql`**
-
-```sql
-\q
-```
-
-Tables do not need to be created manually: Flyway runs the migrations when the backend starts.
-
-### 4.2 Backend
+**macOS (Homebrew)**
 
 ```bash
-cd backend
-mvn spring-boot:run
-```
-
-The backend connects to PostgreSQL with these settings:
-
-| Setting | Value |
-|---|---|
-| Host | `localhost` |
-| Port | `5432` |
-| Database | `inter_mobi` |
-| User | `inter_mobi_user` |
-| Password | `inter_mobi_pass` |
-
-The API starts on http://localhost:8080.
-
-### 4.3 Frontend
-
-In another terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open the address printed by Vite, usually http://localhost:5173/.
-
-By default the frontend calls `/api`, which the Vite dev server proxies to `http://localhost:8080`, so no extra configuration is needed.
-
-**Optional:** to make the frontend call the backend directly instead of going through the proxy, create a local `.env` from the example file:
-
-```bash
-cp .env.example .env
-```
-
-The `.env.example` file contains:
-
-```env
-VITE_API_URL=http://localhost:8080
-```
-
-The `.env` file is not versioned. Restart `npm run dev` after creating or changing it.
-
----
-
-## 5. Running the tests and coverage
-
-The project requires **more than 80% test coverage** on both the backend and the frontend.
-
-### Backend (unit and integration tests, JaCoCo)
-
-```bash
-cd backend
-mvn clean verify
-```
-
-This runs all tests, generates the coverage report and fails the build if coverage is below 80%.
-
-Open the report at:
-
-```
-backend/target/site/jacoco/index.html
-```
-
-### Frontend (unit tests with coverage)
-
-```bash
-cd frontend
-npm install
-npm run test:coverage
-```
-
-Open the report at:
-
-```
-frontend/coverage/index.html
-```
-
-### Coverage summary
-
-| Module | Tool | HTML report |
-|---|---|---|
-| Backend | JaCoCo | `backend/target/site/jacoco/index.html` |
-| Frontend | Jest | `frontend/coverage/index.html` |
